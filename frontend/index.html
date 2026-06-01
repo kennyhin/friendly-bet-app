@@ -3,480 +3,575 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FriendlyBet - Bet with Friends</title>
+  <title>Friendly Bet - Bet with Friends</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --dark: #1f2937;
-      --darker: #111827;
-      --light: #f9fafb;
-      --gray: #6b7280;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --accent: #f59e0b;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+      --radius: 0.5rem;
+      --radius-lg: 0.75rem;
     }
-    
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8fafc;
-      color: #333;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
       line-height: 1.6;
     }
-    
+
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 1rem;
     }
-    
-    .header {
-      text-align: center;
-      padding: 30px 0;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    header {
+      background-color: var(--surface);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    
-    .header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-    
-    .header p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-    }
-    
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      margin-bottom: 25px;
-    }
-    
-    .card-title {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: var(--dark);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--dark);
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px 15px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s;
-    }
-    
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    
-    .btn {
-      display: inline-block;
-      padding: 12px 24px;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-    
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-    
-    .btn-secondary {
-      background: #f3f4f6;
-      color: var(--dark);
-      border: 2px solid #e2e8f0;
-    }
-    
-    .btn-secondary:hover {
-      background: #e5e7eb;
-    }
-    
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-    
-    .btn-success:hover {
-      background: #059669;
-    }
-    
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-    
-    .btn-danger:hover {
-      background: #dc2626;
-    }
-    
-    .btn-block {
-      width: 100%;
-      padding: 16px;
-    }
-    
-    .bet-preview {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      border-left: 4px solid var(--primary);
-    }
-    
-    .bet-preview h3 {
-      margin-bottom: 15px;
-      color: var(--dark);
-    }
-    
-    .bet-preview p {
-      margin: 8px 0;
+
+    .header-content {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
     }
-    
-    .bet-preview .amount {
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-    
-    .bet-preview .teams {
-      font-weight: 600;
-    }
-    
-    .status-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .status-pending {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-    
-    .status-waiting {
-      background: #fffbeb;
-      color: #92400e;
-    }
-    
-    .status-confirmed {
-      background: #dcfce7;
-      color: #166534;
-    }
-    
-    .status-settled {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-    
-    .steps {
-      display: grid;
-      gap: 15px;
-      margin-top: 25px;
-    }
-    
-    .step {
+
+    .logo {
       display: flex;
-      align-items: flex-start;
-      gap: 15px;
-      padding: 20px;
-      background: #f8fafc;
-      border-radius: 10px;
-      border: 1px solid #e2e8f0;
+      align-items: center;
+      gap: 0.75rem;
     }
-    
-    .step-number {
-      background: var(--primary);
+
+    .logo-icon {
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background-color: var(--border);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 6rem 0;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
-      width: 30px;
-      height: 30px;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: var(--surface);
+      color: var(--primary);
+      padding: 1rem 2rem;
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      border: none;
+      cursor: pointer;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .features {
+      padding: 4rem 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      flex-shrink: 0;
+      margin-bottom: 1.5rem;
     }
-    
-    .step-content h4 {
-      margin-bottom: 8px;
-      color: var(--dark);
+
+    .feature-icon i {
+      font-size: 1.5rem;
+      color: white;
     }
-    
-    .step-content p {
-      color: var(--gray);
-      font-size: 0.95rem;
+
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
     }
-    
-    .footer {
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .how-it-works {
+      background-color: var(--surface);
+      padding: 4rem 0;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .step {
       text-align: center;
-      padding: 30px 0;
-      color: var(--gray);
-      font-size: 0.9rem;
-      border-top: 1px solid #e2e8f0;
-      margin-top: 40px;
+      padding: 2rem;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
     }
-    
-    .footer a {
-      color: var(--primary);
+
+    .step-number {
+      display: inline-block;
+      width: 3rem;
+      height: 3rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .step-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .bet-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .bet-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.5rem;
+    }
+
+    .bet-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .bet-body {
+      padding: 2rem;
+    }
+
+    .bet-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .bet-info-item {
+      text-align: center;
+    }
+
+    .bet-info-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .bet-info-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .bet-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .bet-btn {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bet-btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .bet-btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .bet-btn-secondary {
+      background-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    .bet-btn-secondary:hover {
+      background-color: var(--border-dark);
+    }
+
+    .bet-btn-success {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .bet-btn-success:hover {
+      background-color: var(--secondary-dark);
+    }
+
+    .bet-btn-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .bet-btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+    }
+
+    .footer {
+      background-color: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
       text-decoration: none;
+      font-size: 0.9rem;
     }
-    
-    .footer a:hover {
-      text-decoration: underline;
+
+    .footer-link:hover {
+      color: var(--text-primary);
     }
-    
+
+    .footer-text {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
     @media (max-width: 768px) {
-      .container {
-        padding: 15px;
+      .header-content {
+        flex-direction: column;
+        gap: 1.5rem;
       }
-      
-      .header h1 {
-        font-size: 2rem;
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
       }
-      
-      .card {
-        padding: 20px;
+
+      .hero-title {
+        font-size: 2.25rem;
       }
-      
+
+      .hero-subtitle {
+        font-size: 1.125rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
       .steps {
         grid-template-columns: 1fr;
+      }
+
+      .bet-info {
+        grid-template-columns: 1fr;
+      }
+
+      .bet-actions {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1>FriendlyBet</h1>
-      <p>Bet with friends, not against the house</p>
-    </header>
-    
-    <main>
-      <section class="card">
-        <h2 class="card-title">
-          <span>🎯</span> Create a New Bet
-        </h2>
-        
-        <form id="bet-form">
-          <div class="form-group">
-            <label for="sport">Sport</label>
-            <select id="sport" required>
-              <option value="">Select a sport</option>
-              <option value="basketball">Basketball (NBA)</option>
-              <option value="football">Football (NFL)</option>
-              <option value="baseball">Baseball (MLB)</option>
-              <option value="soccer">Soccer</option>
-              <option value="hockey">Hockey (NHL)</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="teams">Matchup</label>
-            <input type="text" id="teams" placeholder="e.g., Spurs vs Lakers" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="game-date">Game Date & Time</label>
-            <input type="datetime-local" id="game-date" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="bet-type">Bet Type</label>
-            <select id="bet-type" required>
-              <option value="">Select bet type</option>
-              <option value="winner">Pick the Winner</option>
-              <option value="spread">Point Spread</option>
-              <option value="over-under">Over/Under (Total Points)</option>
-              <option value="prop">Proposition Bet</option>
-            </select>
-          </div>
-          
-          <div class="form-group" id="bet-details">
-            <!-- Dynamic based on bet type -->
-          </div>
-          
-          <div class="form-group">
-            <label for="amount">Bet Amount (per person)</label>
-            <div class="input-group">
-              <input type="number" id="amount" min="1" step="1" placeholder="Enter amount in USD" required>
-              <span class="input-group-text">USD</span>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="description">Description (Optional)</label>
-            <textarea id="description" rows="3" placeholder="Add any special terms or notes..."></textarea>
-          </div>
-          
-          <button type="submit" class="btn btn-primary btn-block">
-            Create Bet & Get Invite Link
-          </button>
-        </form>
-      </section>
-      
-      <section class="card" id="bet-preview" style="display: none;">
-        <h2 class="card-title">
-          <span>👀</span> Bet Preview
-        </h2>
-        <div class="bet-preview" id="bet-preview-content">
-          <!-- Preview will be inserted here -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">🎯</div>
+          <div class="logo-text">Friendly Bet</div>
         </div>
-      </section>
-      
-      <section class="card">
-        <h2 class="card-title">
-          <span>📋</span> How It Works
-        </h2>
-        <div class="steps">
-          <div class="step">
-            <div class="step-number">1</div>
-            <div class="step-content">
-              <h4>Create Your Bet</h4>
-              <p>Pick the sport, teams, bet type, and amount. Generate a secure invite link to send to your friend.</p>
-            </div>
+        <nav class="nav-links">
+          <a href="#" class="nav-link active">How it Works</a>
+          <a href="#" class="nav-link">Features</a>
+          <a href="#" class="nav-link">Security</a>
+          <a href="#" class="nav-link">About</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">Bet with Friends</h1>
+      <p class="hero-subtitle">
+        Create friendly bets on sports games, events, or anything you can imagine. 
+        Secure, transparent, and fun - all with Stripe Connect.
+      </p>
+      <button class="cta-button">Get Started Free</button>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title text-center mb-5">Why Friendly Bet?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-handshake"></i>
           </div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-content">
-              <h4>Friend Accepts</h4>
-              <p>Your friend opens the link, accepts the bet, and chooses their side. Both parties deposit funds into secure escrow.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-content">
-              <h4>Game Plays Out</h4>
-              <p>Watch the game! Results can be confirmed manually or pulled automatically from sports APIs.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-number">4</div>
-            <div class="step-content">
-              <h4>Winner Gets Paid</h4>
-              <p>Once the result is confirmed, the full pot (minus small processing fee) is automatically sent to the winner.</p>
-            </div>
+          <div class="feature-title">Bet with Friends</div>
+          <div class="feature-description">
+            Create private bets with your friends on sports games, TV shows, or any 
+            outcome you can agree on. No strangers, no hassle.
           </div>
         </div>
-      </section>
-    </main>
-    
-    <footer class="footer">
-      <p>FriendlyBet - Bet with friends, not against the house</p>
-      <p>&copy; 2026 FriendlyBet. Not a gambling platform - for entertainment only between consenting adults.</p>
-      <p><a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></p>
-    </footer>
-  </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="feature-title">Secure & Transparent</div>
+          <div class="feature-description">
+            All funds are held securely in escrow via Stripe Connect. 
+            Full transaction history and instant payouts.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <div class="feature-title">Auto Payouts</div>
+          <div class="feature-description">
+            Winner gets paid automatically when the event concludes. 
+            No chasing, no disputes.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <div class="feature-title">Mobile Friendly</div>
+          <div class="feature-description">
+            Works seamlessly on any device. Create and manage bets from your phone.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <div class="container">
+      <h2 class="section-title text-center mb-5">How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-title">Create a Bet</div>
+          <div class="step-description">
+            Pick teams, set the amount, and add any details. 
+            Share the link with your friend.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-title">Friend Joins</div>
+          <div class="step-description">
+            Your friend accepts the bet, chooses their side, 
+            and both deposit funds securely.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-title">Get Paid</div>
+          <div class="step-description">
+            Once the event concludes, the winner 
+            gets paid automatically to their bank.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="#" class="footer-link">Terms of Service</a>
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Security</a>
+        <a href="#" class="footer-link">Blog</a>
+      </div>
+      <div class="footer-text">
+        &copy; 2026 Friendly Bet. All rights reserved. 
+        Friendly Bet is not affiliated with any sports leagues or organizations.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
   
   <script>
-    document.getElementById('bet-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const sport = document.getElementById('sport').value;
-      const teams = document.getElementById('teams').value;
-      const gameDate = document.getElementById('game-date').value;
-      const betType = document.getElementById('bet-type').value;
-      const amount = document.getElementById('amount').value;
-      const description = document.getElementById('description').value;
-      
-      if (!sport || !teams || !gameDate || !betType || !amount) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      // Show preview
-      const previewContent = `
-        <h3>Your Bet Preview</h3>
-        <p><span class="teams">${teams}</span></p>
-        <p><span class="amount">$${amount}</span> per person</p>
-        <p><span class="bet-type">${betType.replace('-', ' ')}</span> bet</p>
-        <p>${description ? `<em>${description}</em>` : ''}</p>
-        <p><strong>Potential payout: $${parseInt(amount) * 2}</strong> (minus processing fee)</p>
-      `;
-      
-      document.getElementById('bet-preview-content').innerHTML = previewContent;
-      document.getElementById('bet-preview').style.display = 'block';
-      
-      // In a real app, this would generate a shareable link
-      alert('Bet created! In the full app, you would get a shareable link to send to your friend.');
-      
-      // Reset form
-      this.reset();
-    });
-    
-    // Dynamic bet type details
-    document.getElementById('bet-type').addEventListener('change', function() {
-      const detailsDiv = document.getElementById('bet-details');
-      detailsDiv.innerHTML = '';
-      
-      if (this.value === 'spread') {
-        detailsDiv.innerHTML = `
-          <div class="form-group">
-            <label for="spread">Point Spread</label>
-            <input type="number" id="spread" step="0.5" placeholder="e.g., -5.5" required>
-          </div>
-        `;
-      } else if (this.value === 'over-under') {
-        detailsDiv.innerHTML = `
-          <div class="form-group">
-            <label for="total">Over/Under Total</label>
-            <input type="number" id="total" placeholder="e.g., 220.5" required>
-          </div>
-        `;
-      } else if (this.value === 'prop') {
-        detailsDiv.innerHTML = `
-          <div class="form-group">
-            <label for="prop">Proposition Bet</label>
-            <input type="text" id="prop" placeholder="e.g., Will Player X score over 25 points?" required>
-          </div>
-        `;
-      }
+    // Basic frontend interactions would go here
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile menu toggle would go here
+      console.log('Friendly Bet frontend loaded');
     });
   </script>
 </body>
