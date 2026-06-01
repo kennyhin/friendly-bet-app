@@ -1,229 +1,186 @@
-# Friendly Bet - Peer-to-Peer Sports Betting App
+# Friendly Bet — Peer-to-Peer Betting App
 
-## Overview
-Friendly Bet is a peer-to-peer betting platform designed for friends to create and settle bets on sports games, events, or any agreeable outcome. Built with security, transparency, and ease of use in mind.
-
-## Tech Stack
-
-### Frontend
-- React/Vue.js (TBD) - Responsive web interface
-- Tailwind CSS - Utility-first styling
-- Web3Modal/WalletConnect (optional) - Crypto wallet integration
-
-### Backend
-- Node.js/Express - REST API server
-- Firebase/Firestore - Real-time database
-- Firebase Authentication - User management (Google sign-in)
-- Stripe Connect - Payment processing & payouts
-
-### Infrastructure
-- Vercel/Netlify - Frontend hosting
-- Firebase Functions - Backend hosting (optional)
-- MongoDB Atlas/PostgreSQL - Alternative DB option
-
-## Core Features
-
-### 1. Bet Creation
-- Select teams/participants
-- Set wager amount
-- Add description/terms
-- Generate shareable link/invite
-
-### 2. Peer Interaction
-- Invite friends via link, SMS, or app notification
-- Friends accept and choose their position
-- Both parties confirm participation
-
-### 3. Secure Payments
-- Stripe Connect integration
-- Funds held in escrow until bet settlement
-- Instant payouts to winner's bank account
-- PCI-DSS compliant payment processing
-
-### 4. Result Resolution
-- Manual confirmation (both parties agree)
-- Optional API integration for auto-resolution (sports, weather, etc.)
-- Dispute resolution mechanism
-
-### 5. User Experience
-- Clean, intuitive interface
-- Real-time updates
-- Transaction history
-- Bet history and statistics
-- Mobile-responsive design
-
-## Data Models
-
-### Bet
-```javascript
-{
-  id: string,
-  creatorId: string,        // User who created the bet
-  opponentId: string|null,  // User who accepted the bet (null until accepted)
-  event: {
-    id: string,             // External event ID (game, match, etc.)
-    name: string,           // e.g., "Spurs vs Lakers"
-    sport: string,          // e.g., "basketball"
-    startTime: timestamp,
-    endTime: timestamp|null // When result is known
-  },
-  terms: {
-    creatorChoice: string,  // What creator is betting on
-    opponentChoice: string|null, // What opponent chose
-    amount: number,         // Wager amount in USD
-    currency: string = "usd"
-  },
-  status: enum[             // Bet lifecycle states
-    'created',      // Bet created, waiting for opponent
-    'awaiting_deposit', // Opponent accepted, waiting for funds
-    'funded',       // Both parties have deposited
-    'settled',      // Event concluded, winner determined
-    'paid_out',     // Winner has been paid
-    'cancelled',    // Bet was cancelled
-    'disputed'      // Parties disagree on outcome
-  ],
-  timestamps: {
-    createdAt: timestamp,
-    updatedAt: timestamp,
-    settledAt: timestamp|null,
-    paidOutAt: timestamp|null
-  },
-  metadata: {
-    description: string,
-    tags: string[],         // e.g., ['nba', 'basketball', 'playoffs']
-    isPrivate: boolean      // True for friend-only bets
-  }
-}
-```
-
-### User
-```javascript
-{
-  id: string,               // Firebase UID
-  email: string,
-  displayName: string,
-  photoURL: string|null,
-  stripeAccountId: string|null, // Connected Stripe account
-  createdAt: timestamp,
-  totalBets: number,
-  totalWon: number,
-  totalLost: number,
-  totalEarned: number       // Net winnings
-}
-```
-
-### Transaction
-```javascript
-{
-  id: string,
-  betId: string,
-  type: enum['deposit', 'payout', 'refund', 'fee'],
-  amount: number,
-  currency: string,
-  status: enum['pending', 'succeeded', 'failed'],
-  stripePaymentIntentId: string|null,
-  stripeTransferId: string|null,
-  userId: string,           // Which user this transaction affects
-  createdAt: timestamp
-}
-```
-
-## Payment Flow (Stripe Connect)
-
-1. **Account Connection**: Users connect their Stripe account via OAuth
-2. **Deposit**: 
-   - User A deposits $X → Money goes to Platform's Stripe account (held in escrow)
-   - User B deposits $X → Money goes to Platform's Stripe account (held in escrow)
-3. **Payout**:
-   - On bet resolution: Platform transfers $2X to winner's Stripe account
-   - Winner can then transfer to their bank
-
-### Stripe Fees
-- 2.9% + $0.30 per successful charge
-- Additional 0.25% for Instant Payouts (optional)
-- No charge for failed payments
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/user` - Get current user profile
-
-### Bets
-- `GET /api/bets` - List user's bets
-- `POST /api/bets` - Create new bet
-- `GET /api/bets/:id` - Get bet details
-- `PUT /api/bets/:id` - Update bet (accept, choose side, etc.)
-- `DELETE /api/bets/:id` - Cancel bet
-- `POST /api/bets/:id/confirm-result` - Confirm bet result
-
-### Payments
-- `POST /api/payments/create-payment-intent` - Create Stripe payment intent
-- `POST /api/payments/confirm-payment` - Confirm payment success
-- `POST /api/webhook/stripe` - Stripe webhook endpoint
-
-### Events (Optional - for auto-resolution)
-- `GET /api/events/sports/nba/today` - Get today's NBA games
-- `GET /api/events/sports/nba/:date` - Get NBA games for date
-- `GET /api/events/sports/nba/:gameId` - Get specific game details
-
-## Security Considerations
-
-1. **Authentication**: Firebase Auth with Google sign-in
-2. **Authorization**: Firestore security rules (see database.rules)
-3. **Payment Security**: Stripe handles PCI compliance
-4. **Data Protection**: All sensitive data encrypted at rest
-5. **Rate Limiting**: Prevent abuse of API endpoints
-6. **Input Validation**: Sanitize all user inputs
-7. **CSRF Protection**: Implement CSRF tokens for forms
-8. **HTTPS Only**: Enforce TLS for all connections
-
-## Deployment
-
-### Local Development
-```bash
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-# Add your Firebase, Stripe, and other secrets
-
-# Start development server
-npm run dev
-```
-
-### Production
-1. Set up Firebase project
-2. Configure Stripe Connect account
-3. Set environment variables
-4. Deploy frontend to Vercel/Netlify
-5. Deploy backend to Firebase Functions or traditional server
-6. Configure webhooks in Stripe dashboard
-
-## Future Enhancements
-
-- [ ] Crypto wallet integration (USDC, Ethereum)
-- [ ] Group bets (more than 2 people)
-- [ ] Bet sharing to social media
-- [ ] Leaderboards and achievements
-- [ ] Chat functionality between bettors
-- [ ] Bet templates for common wagers
-- [ ] Push notifications
-- [ ] Mobile app (React Native/Flutter)
-- [ ] League/tournament betting
-- [ ] Props betting (player stats, etc.)
-
-## Legal Disclaimer
-
-⚠️ **Important**: Friendly Bet facilitates peer-to-peer betting between consenting adults. Users are responsible for ensuring that their use of the platform complies with all local, state, and federal laws regarding gambling and money transmission. The platform does not provide legal advice.
-
-Stripe Connect is used for payment processing, but users should review Stripe's Terms of Service and Acceptable Use Policy.
-
-For questions about legality in your jurisdiction, consult with a qualified attorney.
+> Friends-only betting with secure escrow and automatic payouts via Stripe Connect.
 
 ---
 
-*Built with ❤️ for friendly competition*
+## Current State (as of May 31, 2026)
+
+**A fully working prototype is built and running.** The frontend is a complete React app with mock data (localStorage) standing in for Firebase and Stripe. Every screen of the core bet lifecycle is functional and testable in the browser right now — no backend credentials required.
+
+### What's working end-to-end
+- Create a bet (event, picks, amount, optional note)
+- Live preview card while filling the form
+- Invite link generation for the opponent
+- Friend accepts bet via invite link (sees their side/buy-in)
+- Mock Stripe deposit flow for both players (with loading + success states)
+- Deposit tracker (shows who's paid, auto-transitions to "Live" when both deposit)
+- Winner claims result → opponent confirms or disputes
+- Winner sees celebration banner; loser sees "Better luck next time"
+- "Demo mode" user switcher in the header (Alice / Bob / Charlie) to play all sides
+
+### What's mocked (needs real implementation)
+- **Auth**: user switcher replaces Google sign-in — swap for Firebase Auth
+- **Database**: localStorage replaces Firestore — swap `store.js` functions
+- **Payments**: fake card form replaces real Stripe — swap with Stripe Payment Element + backend
+
+---
+
+## Project Structure
+
+```
+friendly-bet/
+├── frontend/               ← React + Vite app (THE WORKING PROTOTYPE)
+│   ├── index.html
+│   ├── package.json        ← npm deps: react, react-dom, react-router-dom, vite
+│   ├── vite.config.js
+│   └── src/
+│       ├── main.jsx        ← entry point
+│       ├── App.jsx         ← HashRouter + routes
+│       ├── index.css       ← all styles (CSS variables, components, layout)
+│       ├── store.js        ← localStorage mock store (swap this for Firebase)
+│       ├── components/
+│       │   ├── Header.jsx      ← sticky header + demo user switcher
+│       │   ├── BetCard.jsx     ← compact bet card for home page list
+│       │   └── StatusBadge.jsx ← status pill (created/live/settled/etc.)
+│       └── pages/
+│           ├── Home.jsx        ← dashboard: active + past bets
+│           ├── CreateBet.jsx   ← bet creation form with live preview
+│           ├── BetDetail.jsx   ← full lifecycle view + deposit + result flow
+│           └── JoinBet.jsx     ← invite accept page (opponent's entry point)
+│
+├── backend/
+│   └── index.js            ← Firebase Functions stubs (NOT implemented yet)
+│
+├── database.rules          ← Firestore security rules (defined, untested)
+├── docs/
+│   ├── API.md
+│   └── DATA_MODELS.md
+└── .claude/
+    └── launch.json         ← dev server config for Claude Code preview
+```
+
+---
+
+## Running Locally
+
+```bash
+cd frontend
+npm install
+npm run dev
+# → http://localhost:5174
+```
+
+---
+
+## Bet Lifecycle (Data Model)
+
+```
+created → awaiting_deposit → funded → pending_confirmation → paid_out
+                                                           ↘ disputed
+          (also: cancelled at any pre-funded stage)
+```
+
+Each bet in the store:
+```js
+{
+  id: string,
+  creatorId: string,          // 'alice' | 'bob' | 'charlie' (mock user IDs)
+  opponentId: string | null,
+  event: string,              // "Lakers vs Celtics"
+  creatorPick: string,        // "Lakers"
+  opponentPick: string,       // "Celtics"
+  amount: number,             // per-person amount
+  note: string,
+  status: string,             // see lifecycle above
+  creatorDeposited: boolean,
+  opponentDeposited: boolean,
+  claimedWinnerId: string | null,
+  winnerId: string | null,
+  createdAt: number,
+  updatedAt: number,
+}
+```
+
+---
+
+## Routes
+
+| Path | Page | Notes |
+|------|------|-------|
+| `/#/` | Home | Dashboard, list of user's bets |
+| `/#/create` | CreateBet | Form + live preview |
+| `/#/bet/:id` | BetDetail | Full lifecycle, deposit, result |
+| `/#/join/:id` | JoinBet | Invite link destination |
+
+Hash-based routing (react-router-dom HashRouter) so it works on GitHub Pages without server config.
+
+---
+
+## The store.js Swap Plan (Firebase)
+
+When you're ready to wire in real Firebase, `frontend/src/store.js` is the only file that needs replacing. Every exported function maps directly to a Firestore operation:
+
+| Current mock function | Real Firebase equivalent |
+|---|---|
+| `createBet(data)` | `addDoc(collection(db, 'bets'), data)` |
+| `getBetById(id)` | `getDoc(doc(db, 'bets', id))` |
+| `getUserBets(userId)` | `query(collection(db, 'bets'), where(...))` |
+| `deposit(betId)` | `updateDoc` + check both deposits → update status |
+| `acceptBet(betId)` | `updateDoc(doc(db, 'bets', betId), { opponentId, status })` |
+| `claimWin(betId)` | `updateDoc` → set claimedWinnerId + status |
+| `confirmWinner(betId, confirmed)` | `updateDoc` → set winnerId + trigger payout |
+
+Real-time updates: swap the `subscribe` / `useStore` pattern for Firestore `onSnapshot`.
+
+---
+
+## The Stripe Integration Plan
+
+1. **User onboarding**: Stripe Connect OAuth — user links their bank account
+2. **Deposit**: Create a `PaymentIntent` on the backend for `amount`, charge the user's card, hold funds in platform Stripe account (escrow)
+3. **Payout**: On `confirmWinner`, backend calls `stripe.transfers.create` to send `amount * 2` to winner's connected Stripe account
+4. **Frontend**: Replace the mock card form in `BetDetail.jsx → DepositFlow` with a real [Stripe Payment Element](https://stripe.com/docs/payments/payment-element)
+
+Backend endpoints needed (stub skeletons exist in `backend/index.js`):
+- `POST /createPaymentIntent` — creates Stripe PaymentIntent, returns client secret
+- `POST /confirmPayout` — transfers funds to winner's Stripe account
+- `POST /webhook/stripe` — handles `payment_intent.succeeded` events
+
+---
+
+## Next Steps (Priority Order)
+
+1. **Set up Firebase project** — enable Firestore + Firebase Auth (Google provider)
+2. **Set up Stripe Connect** — apply for Standard or Express account
+3. **Wire up `.env`** — copy `.env.example`, fill in Firebase + Stripe keys
+4. **Replace `store.js`** — swap localStorage calls for Firestore (see table above)
+5. **Add real auth** — replace demo user switcher with `signInWithGoogle()` + Firebase Auth state
+6. **Wire Stripe deposits** — replace `DepositFlow` component with Stripe Payment Element
+7. **Implement payout** — backend `confirmPayout` endpoint → `stripe.transfers.create`
+8. **Deploy** — frontend to Vercel/Netlify, backend to Firebase Functions
+
+---
+
+## Tech Stack (Final)
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18 + Vite + react-router-dom (HashRouter) |
+| Styling | Custom CSS (CSS variables, no framework) |
+| Mock data | localStorage (prototype only) |
+| Real database | Firebase Firestore |
+| Auth | Firebase Auth (Google sign-in) |
+| Payments | Stripe Connect (escrow + payouts) |
+| Backend | Firebase Functions (Node.js) |
+| Hosting | Frontend → Vercel / Backend → Firebase Functions |
+
+---
+
+## Legal Note
+
+Friendly Bet facilitates peer-to-peer bets between consenting adults. Users are responsible for ensuring compliance with local laws on gambling and money transmission. Consult a qualified attorney before launching publicly.
+
+---
+
+*Built with Claude Code — prototype complete May 2026*
