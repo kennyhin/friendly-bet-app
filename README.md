@@ -1,64 +1,36 @@
-# Friendly Bet — Peer-to-Peer Betting App
+# WannaBet? — Social Credit Betting App
 
-> Friends-only betting with secure escrow and automatic payouts via Stripe Connect.
+> Friends-only prediction challenges using demo credits with no cash value.
 
----
-
-## Current State (as of May 31, 2026)
-
-**A fully working prototype is built and running.** The frontend is a complete React app with mock data (localStorage) standing in for Firebase and Stripe. Every screen of the core bet lifecycle is functional and testable in the browser right now — no backend credentials required.
-
-### What's working end-to-end
-- Create a bet (event, picks, amount, optional note)
-- Live preview card while filling the form
-- Invite link generation for the opponent
-- Friend accepts bet via invite link (sees their side/buy-in)
-- Mock Stripe deposit flow for both players (with loading + success states)
-- Deposit tracker (shows who's paid, auto-transitions to "Live" when both deposit)
-- Winner claims result → opponent confirms or disputes
-- Winner sees celebration banner; loser sees "Better luck next time"
-- "Demo mode" user switcher in the header (Alice / Bob / Charlie) to play all sides
-
-### What's mocked (needs real implementation)
-- **Auth**: user switcher replaces Google sign-in — swap for Firebase Auth
-- **Database**: localStorage replaces Firestore — swap `store.js` functions
-- **Payments**: fake card form replaces real Stripe — swap with Stripe Payment Element + backend
+**Live demo:** https://kennyhin.github.io/friendly-bet-app/
+**Repo:** https://github.com/kennyhin/friendly-bet-app
 
 ---
 
-## Project Structure
+## Current State (May 31, 2026)
 
-```
-friendly-bet/
-├── frontend/               ← React + Vite app (THE WORKING PROTOTYPE)
-│   ├── index.html
-│   ├── package.json        ← npm deps: react, react-dom, react-router-dom, vite
-│   ├── vite.config.js
-│   └── src/
-│       ├── main.jsx        ← entry point
-│       ├── App.jsx         ← HashRouter + routes
-│       ├── index.css       ← all styles (CSS variables, components, layout)
-│       ├── store.js        ← localStorage mock store (swap this for Firebase)
-│       ├── components/
-│       │   ├── Header.jsx      ← sticky header + demo user switcher
-│       │   ├── BetCard.jsx     ← compact bet card for home page list
-│       │   └── StatusBadge.jsx ← status pill (created/live/settled/etc.)
-│       └── pages/
-│           ├── Home.jsx        ← dashboard: active + past bets
-│           ├── CreateBet.jsx   ← bet creation form with live preview
-│           ├── BetDetail.jsx   ← full lifecycle view + deposit + result flow
-│           └── JoinBet.jsx     ← invite accept page (opponent's entry point)
-│
-├── backend/
-│   └── index.js            ← Firebase Functions stubs (NOT implemented yet)
-│
-├── database.rules          ← Firestore security rules (defined, untested)
-├── docs/
-│   ├── API.md
-│   └── DATA_MODELS.md
-└── .claude/
-    └── launch.json         ← dev server config for Claude Code preview
-```
+Full working prototype. No Firebase or payment credentials needed — runs entirely in the browser with localStorage mock data and the free ESPN public API for live sports data.
+
+### What works end-to-end
+- ✅ Create a bet — Custom Bet (anything) or Sports Bet (live games from ESPN)
+- ✅ Sports Bet flow: pick sport → live games → Moneyline / Spread / O/U / Player Prop → odds pick cards
+- ✅ Real ESPN odds — spread, over/under, moneyline pulled live (no API key)
+- ✅ Invite link → friend accepts, sees their side / credit stake
+- ✅ Demo credit staking for both players, live stake tracker
+- ✅ Auto-transitions to "Live" when both players stake credits
+- ✅ Winner claims result → opponent confirms or disputes
+- ✅ Celebration banner for winner, "better luck next time" for loser
+- ✅ Demo credits balance shown in header (tracks stakes, refunds, awards)
+- ✅ "Switch perspective" user dropdown (Alice / Bob / Charlie) to demo both sides
+
+### What's mocked (replace for production)
+| Layer | Now | Replace with |
+|---|---|---|
+| Database | `localStorage` in `store.js` | Firebase Firestore |
+| Auth | Demo user switcher | Firebase Auth (Google sign-in) |
+| Credits | Demo balances in `store.js` | Server-owned non-redeemable credit ledger |
+| Backend | Stubs in `backend/index.js` | Firebase Functions |
+| Sports data | ESPN public API ✅ real | Keep — no change needed |
 
 ---
 
@@ -73,113 +45,165 @@ npm run dev
 
 ---
 
-## Bet Lifecycle (Data Model)
+## Project Structure
 
 ```
-created → awaiting_deposit → funded → pending_confirmation → paid_out
-                                                           ↘ disputed
-          (also: cancelled at any pre-funded stage)
+friendly-bet/
+├── frontend/                    ← React + Vite app (THE PROTOTYPE)
+│   ├── package.json             ← react, react-dom, react-router-dom, vite
+│   ├── vite.config.js           ← base: './' for GH Pages
+│   └── src/
+│       ├── main.jsx             ← entry point
+│       ├── App.jsx              ← HashRouter + 4 routes
+│       ├── index.css            ← Midnight Amber design system (CSS variables)
+│       ├── store.js             ← localStorage mock — SWAP THIS for Firebase
+│       ├── services/
+│       │   └── sportsApi.js     ← ESPN API, odds formatters, bet pick builder
+│       ├── components/
+│       │   ├── Header.jsx       ← WannaBet? logo + credits + user switcher
+│       │   ├── BetCard.jsx      ← dashboard list item (sports-aware)
+│       │   └── StatusBadge.jsx  ← status pill
+│       └── pages/
+│           ├── Home.jsx         ← dashboard (active / past bets)
+│           ├── CreateBet.jsx    ← Custom Bet + Sports Bet tabs
+│           ├── BetDetail.jsx    ← full lifecycle, credit stake, result flow
+│           └── JoinBet.jsx      ← invite link landing page
+│
+├── backend/
+│   └── index.js                 ← Firebase Functions stubs (NOT implemented)
+├── database.rules               ← Firestore security rules (NOT tested)
+└── .env.example                 ← env var template
 ```
 
-Each bet in the store:
+---
+
+## Design System — Midnight Amber
+
+```css
+--bg:      #07080f   /* near-black, deep indigo tint */
+--surface: #10132a   /* card background */
+--primary: #f59e0b   /* electric amber — buttons, selections */
+--teal:    #2dd4bf   /* pick card selected state */
+--win:     #4ade80   /* win/success green */
+--danger:  #f87171   /* red */
+--text:    #eceeff   /* blue-white */
+```
+
+Logo gradient: amber → teal. Sport tabs: 4-column CSS grid (all 12 sports visible, no scroll).
+
+---
+
+## Sports Betting (ESPN API — free, no key)
+
+**12 sports:** NFL · NBA · MLB · NHL · NCAAF · NCAAB · MLS · EPL · PGA · ATP · UFC · F1
+
+**Bet types:**
+- **Moneyline** — who wins (real ESPN moneyline odds)
+- **Spread** — team vs the spread (real ESPN spread + juice)
+- **Over/Under** — total score line (real ESPN total)
+- **Player Prop** — player / stat / line / over or under (manual entry)
+
+ESPN endpoint: `site.api.espn.com/apis/site/v2/sports/{league}/scoreboard`
+Returns teams, logos, game time, spread, O/U, moneyline. CORS-friendly from the browser.
+
+---
+
+## Bet Data Model
+
 ```js
 {
-  id: string,
-  creatorId: string,          // 'alice' | 'bob' | 'charlie' (mock user IDs)
-  opponentId: string | null,
-  event: string,              // "Lakers vs Celtics"
-  creatorPick: string,        // "Lakers"
-  opponentPick: string,       // "Celtics"
-  amount: number,             // per-person amount
-  note: string,
-  status: string,             // see lifecycle above
-  creatorDeposited: boolean,
-  opponentDeposited: boolean,
-  claimedWinnerId: string | null,
-  winnerId: string | null,
-  createdAt: number,
-  updatedAt: number,
+  id, creatorId, opponentId,
+  event,           // "NY Knicks @ San Antonio Spurs"
+  creatorPick,     // "NY -4.5 (-110)"
+  opponentPick,    // "SA +4.5 (-110)"
+  amount,          // per-person demo credit stake
+  note,
+  status,          // created | awaiting_deposit | funded | pending_confirmation
+                   // | paid_out | cancelled | disputed
+  creatorDeposited, opponentDeposited,
+  claimedWinnerId, winnerId,
+  betType,         // 'custom'|'moneyline'|'spread'|'over_under'|'player_prop'
+  sport,           // 'nfl'|'nba'|'mlb'|... (null for custom)
+  sportEmoji, sportName, gameId,
+  createdAt, updatedAt
 }
 ```
 
 ---
 
-## Routes
+## Routes (HashRouter — works on GH Pages)
 
-| Path | Page | Notes |
-|------|------|-------|
-| `/#/` | Home | Dashboard, list of user's bets |
-| `/#/create` | CreateBet | Form + live preview |
-| `/#/bet/:id` | BetDetail | Full lifecycle, deposit, result |
-| `/#/join/:id` | JoinBet | Invite link destination |
-
-Hash-based routing (react-router-dom HashRouter) so it works on GitHub Pages without server config.
+| Hash | Page |
+|---|---|
+| `/#/` | Home — dashboard |
+| `/#/create` | CreateBet — Custom or Sports tab |
+| `/#/bet/:id` | BetDetail — full lifecycle |
+| `/#/join/:id` | JoinBet — invite link landing |
 
 ---
 
-## The store.js Swap Plan (Firebase)
+## The `store.js` → Firebase Swap
 
-When you're ready to wire in real Firebase, `frontend/src/store.js` is the only file that needs replacing. Every exported function maps directly to a Firestore operation:
+Every function in `store.js` maps directly to a Firestore operation:
 
-| Current mock function | Real Firebase equivalent |
+| `store.js` function | Firebase equivalent |
 |---|---|
 | `createBet(data)` | `addDoc(collection(db, 'bets'), data)` |
 | `getBetById(id)` | `getDoc(doc(db, 'bets', id))` |
 | `getUserBets(userId)` | `query(collection(db, 'bets'), where(...))` |
-| `deposit(betId)` | `updateDoc` + check both deposits → update status |
-| `acceptBet(betId)` | `updateDoc(doc(db, 'bets', betId), { opponentId, status })` |
+| `acceptBet(betId)` | `updateDoc` → set opponentId + status |
+| `deposit(betId)` | Server transaction → stake credits, set flag, check both → funded |
 | `claimWin(betId)` | `updateDoc` → set claimedWinnerId + status |
-| `confirmWinner(betId, confirmed)` | `updateDoc` → set winnerId + trigger payout |
+| `confirmWinner(betId, bool)` | Server transaction → set winnerId + award demo credit pot |
+| `cancelBet(betId)` | `updateDoc` → status = cancelled, refund balances |
 
-Real-time updates: swap the `subscribe` / `useStore` pattern for Firestore `onSnapshot`.
+Real-time: replace `subscribe`/`useStore` pub-sub with Firestore `onSnapshot`.
 
 ---
 
-## The Stripe Integration Plan
+## Deploying to GitHub Pages
 
-1. **User onboarding**: Stripe Connect OAuth — user links their bank account
-2. **Deposit**: Create a `PaymentIntent` on the backend for `amount`, charge the user's card, hold funds in platform Stripe account (escrow)
-3. **Payout**: On `confirmWinner`, backend calls `stripe.transfers.create` to send `amount * 2` to winner's connected Stripe account
-4. **Frontend**: Replace the mock card form in `BetDetail.jsx → DepositFlow` with a real [Stripe Payment Element](https://stripe.com/docs/payments/payment-element)
+```bash
+# 1. Build
+cd frontend && npm run build
 
-Backend endpoints needed (stub skeletons exist in `backend/index.js`):
-- `POST /createPaymentIntent` — creates Stripe PaymentIntent, returns client secret
-- `POST /confirmPayout` — transfers funds to winner's Stripe account
-- `POST /webhook/stripe` — handles `payment_intent.succeeded` events
+# 2. Push source
+cd .. && git push app main
+
+# 3. Deploy dist to gh-pages branch
+cd /tmp && rm -rf fb-gh-pages && mkdir fb-gh-pages
+cp -r "/path/to/Friendly Bet/frontend/dist/." fb-gh-pages/
+cd fb-gh-pages
+git init && git add . && git commit -m "Deploy"
+git remote add origin https://github.com/kennyhin/friendly-bet-app
+git push -f origin main:gh-pages
+```
 
 ---
 
 ## Next Steps (Priority Order)
 
-1. **Set up Firebase project** — enable Firestore + Firebase Auth (Google provider)
-2. **Set up Stripe Connect** — apply for Standard or Express account
-3. **Wire up `.env`** — copy `.env.example`, fill in Firebase + Stripe keys
-4. **Replace `store.js`** — swap localStorage calls for Firestore (see table above)
-5. **Add real auth** — replace demo user switcher with `signInWithGoogle()` + Firebase Auth state
-6. **Wire Stripe deposits** — replace `DepositFlow` component with Stripe Payment Element
-7. **Implement payout** — backend `confirmPayout` endpoint → `stripe.transfers.create`
-8. **Deploy** — frontend to Vercel/Netlify, backend to Firebase Functions
+1. **Firebase project** — enable Firestore + Auth (Google sign-in provider)
+2. **Server-owned credit ledger** — balances, stake holds, refunds, awards, audit events
+3. **Fill in `.env`** — copy `.env.example`, add Firebase keys
+4. **Swap `store.js`** — replace localStorage with real Firestore calls (table above)
+5. **Real auth** — replace user switcher with `signInWithGoogle()` + Firebase Auth state
+6. **Dispute/admin tools** — manual result resolution and balance correction
+7. **Production deploy** — frontend → Vercel, backend → Firebase Functions
+
+### UX backlog
+- Push notifications (Firebase Cloud Messaging) when opponent accepts / stakes
+- Auto-resolution via sports results API (winner determined automatically)
+- Leaderboard between a group of friends
+- Chat between bettors on a bet
+- Social sharing ("I just staked 50 credits on the Chiefs")
+- Full odds coverage via [The Odds API](https://the-odds-api.com/) (free tier: 500 req/mo)
 
 ---
 
-## Tech Stack (Final)
+## Legal
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18 + Vite + react-router-dom (HashRouter) |
-| Styling | Custom CSS (CSS variables, no framework) |
-| Mock data | localStorage (prototype only) |
-| Real database | Firebase Firestore |
-| Auth | Firebase Auth (Google sign-in) |
-| Payments | Stripe Connect (escrow + payouts) |
-| Backend | Firebase Functions (Node.js) |
-| Hosting | Frontend → Vercel / Backend → Firebase Functions |
-
----
-
-## Legal Note
-
-Friendly Bet facilitates peer-to-peer bets between consenting adults. Users are responsible for ensuring compliance with local laws on gambling and money transmission. Consult a qualified attorney before launching publicly.
+Friendly Bet / WannaBet? currently uses demo credits with no cash value. Do not add redemption, withdrawals, prizes, crypto, gift cards, or transferable value without legal review. Not affiliated with any sports league or organization.
 
 ---
 
