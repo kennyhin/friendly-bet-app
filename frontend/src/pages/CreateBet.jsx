@@ -97,10 +97,10 @@ export default function CreateBet() {
       {/* Mode tabs */}
       <div className="mode-tabs">
         <button className={`mode-tab ${mode === 'custom' ? 'active' : ''}`} onClick={() => setMode('custom')}>
-          ✏️ Custom Bet
+          ✏️  Custom Bet
         </button>
         <button className={`mode-tab ${mode === 'sports' ? 'active' : ''}`} onClick={() => setMode('sports')}>
-          🏆 Sports Bet
+          🏆  Sports Bet
         </button>
       </div>
 
@@ -111,18 +111,18 @@ export default function CreateBet() {
             <div className="card-body">
               <div className="form-group">
                 <label className="form-label">Event or topic</label>
-                <input className="form-input" placeholder="e.g. Lakers vs Clippers, who gets promoted first, etc." value={form.event} onChange={e => { setForm(f => ({...f, event: e.target.value})); setErrors(r => ({...r, event:''})) }} />
+                <input className="form-input" placeholder="e.g. Who gets promoted first, most push-ups in a minute, first to run a mile..." value={form.event} onChange={e => { setForm(f => ({...f, event: e.target.value})); setErrors(r => ({...r, event:''})) }} />
                 {errors.event && <div style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: 4 }}>{errors.event}</div>}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">Your pick</label>
-                  <input className="form-input" placeholder="e.g. Lakers" value={form.creatorPick} onChange={e => { setForm(f => ({...f, creatorPick: e.target.value})); setErrors(r => ({...r, creatorPick:''})) }} />
+                  <input className="form-input" placeholder="e.g. Me, Yes, Over, Alice" value={form.creatorPick} onChange={e => { setForm(f => ({...f, creatorPick: e.target.value})); setErrors(r => ({...r, creatorPick:''})) }} />
                   {errors.creatorPick && <div style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: 4 }}>{errors.creatorPick}</div>}
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">Opponent's pick</label>
-                  <input className="form-input" placeholder="e.g. Clippers" value={form.opponentPick} onChange={e => { setForm(f => ({...f, opponentPick: e.target.value})); setErrors(r => ({...r, opponentPick:''})) }} />
+                  <input className="form-input" placeholder="e.g. Them, No, Under, Bob" value={form.opponentPick} onChange={e => { setForm(f => ({...f, opponentPick: e.target.value})); setErrors(r => ({...r, opponentPick:''})) }} />
                   {errors.opponentPick && <div style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: 4 }}>{errors.opponentPick}</div>}
                 </div>
               </div>
@@ -301,10 +301,10 @@ function Step({ num, label, done, children }) {
     <div className="card mb-12">
       <div className="card-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 24, height: 24, borderRadius: '50%', background: done ? 'var(--primary)' : 'var(--surface-raised)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 900, color: done ? '#000' : 'var(--text-muted)', flexShrink: 0 }}>
+          <div className={`step-num ${done ? 'done' : 'pending'}`}>
             {done ? '✓' : num}
           </div>
-          <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{label}</span>
+          <span style={{ fontWeight: 800, fontSize: '0.88rem' }}>{label}</span>
         </div>
       </div>
       <div className="card-body">{children}</div>
