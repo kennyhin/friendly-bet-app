@@ -61,7 +61,8 @@ export function getUserBets(userId) {
   return load().bets.filter(b => b.creatorId === userId || b.opponentId === userId)
 }
 
-export function createBet({ event, creatorPick, opponentPick, amount, note }) {
+export function createBet(betData) {
+  const { event, creatorPick, opponentPick, amount, note, ...rest } = betData
   const data = load()
   const bet = {
     id: Math.random().toString(36).slice(2, 10),
@@ -72,6 +73,11 @@ export function createBet({ event, creatorPick, opponentPick, amount, note }) {
     opponentPick,
     amount: Number(amount),
     note: note || '',
+    betType: 'custom',
+    sport: null,
+    sportEmoji: null,
+    sportName: null,
+    ...rest,
     status: 'created',
     creatorDeposited: false,
     opponentDeposited: false,

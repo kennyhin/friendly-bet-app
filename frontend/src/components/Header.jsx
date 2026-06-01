@@ -11,24 +11,19 @@ export default function Header() {
   const users = getUsers()
 
   useEffect(() => {
-    function onClick(e) {
+    function onDown(e) {
       if (dropRef.current && !dropRef.current.contains(e.target)) setOpen(false)
     }
-    document.addEventListener('mousedown', onClick)
-    return () => document.removeEventListener('mousedown', onClick)
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
   }, [])
-
-  function switchUser(id) {
-    setCurrentUser(id)
-    setOpen(false)
-  }
 
   return (
     <header className="header">
       <div className="header-inner">
         <Link to="/" className="logo">
-          <span className="logo-icon">🎯</span>
-          <span className="logo-name">Friendly Bet</span>
+          <span className="logo-icon">⚡</span>
+          <span className="logo-name">WannaBet?</span>
         </Link>
 
         <div className="header-right">
@@ -41,11 +36,9 @@ export default function Header() {
               <Avatar user={currentUser} size="sm" />
               <span>
                 <div className="user-switcher-label">Demo mode</div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, lineHeight: 1.1 }}>
-                  {currentUser?.name.split(' ')[0]}
-                </div>
+                <div className="user-switcher-name">{currentUser?.name.split(' ')[0]}</div>
               </span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>▼</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: '0.65rem' }}>▼</span>
             </button>
 
             {open && (
@@ -55,11 +48,13 @@ export default function Header() {
                   <div
                     key={u.id}
                     className={`user-dropdown-item ${u.id === currentUser?.id ? 'active' : ''}`}
-                    onClick={() => switchUser(u.id)}
+                    onClick={() => { setCurrentUser(u.id); setOpen(false) }}
                   >
                     <Avatar user={u} size="sm" />
                     {u.name}
-                    {u.id === currentUser?.id && <span style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>✓</span>}
+                    {u.id === currentUser?.id && (
+                      <span style={{ marginLeft: 'auto', color: 'var(--primary)', fontSize: '0.8rem' }}>✓</span>
+                    )}
                   </div>
                 ))}
               </div>
